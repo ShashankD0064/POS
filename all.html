@@ -1,0 +1,742 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>POS</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel="stylesheet" href="css/master.css">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #E9F0F4;
+            margin: 0;
+            padding: 0;
+            animation: transitionIn 0.75s;
+        }
+       
+        @keyframes fadeOut {
+        from { opacity: 1; }
+        to { opacity: 0; }
+        }
+
+        @keyframes fadeIn {
+        from { opacity: 0; }
+        to { opacity: 1; }
+        }
+
+        .fade-out {
+        animation: fadeOut 0.5s ease-out forwards;
+        }
+        .fade-in {
+        animation: fadeIn 0.5s ease-in forwards;
+        }
+
+        body {
+        opacity: 0;
+        }
+        .container {
+            display: flex;
+            gap: 20px;
+            padding: 20px;
+        }
+        .sidebar {
+            width: 80px;
+            background-color: #ffffff;
+            border-right: 1px solid #ddd;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px 0;
+            gap: 20px;
+            border-radius: 15px;
+        }
+
+        .sidebar .icon {
+            width: 50px;
+            height: 50px;
+            background-color: #f0f0f0;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: background-color 0.3s;
+            color: #6200ea;
+            border-color: transparent;
+        }
+       
+        .sidebar .icon.active, .sidebar .icon:hover {
+            background-color: #e7e4ff;
+            color: #6200ea;
+        }
+
+        .sidebar .icon img {
+            width: 50%;
+        }
+
+        .ongoing-orders {
+            flex: 1;
+        }
+
+
+        .nav-tabs {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+            display: flex;
+        }
+
+        .nav-tabs li {
+            margin-right: 20px;
+        }
+
+        .nav-tabs li a {
+            text-decoration: none;
+            color: #333;
+            font-weight: bold;
+        }
+
+        .nav-tabs li.active a {
+            color: #007bff;
+        }
+
+        .search-bar {
+            margin: 20px 0;
+            position: relative;
+            width: 100%;
+        }
+
+        .search-bar input {
+            width: 100%;
+            padding: 10px 10px 10px 40px;
+            font-size: 16px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+
+        .search-bar .search-icon {
+            position: absolute;
+            left: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 20px;
+            color: #aaa;
+        }
+
+
+        .tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .tab {
+            padding: 10px 20px;
+            border: none;
+            background-color: #f0f0f0;
+            cursor: pointer;
+            border-radius: 5px;
+            transition: background-color 0.3s, color 0.3s;
+            font-weight: bold;
+            color: #333;
+        }
+
+        .tab.active {
+            background-color: #007bff;
+            color: #fff;
+        }
+
+        .tab:hover {
+            background-color: #ddd;
+        }
+
+        .orders {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 20px;
+        }
+
+        .order-card {
+            background-color: #fff;
+            padding: 10px;
+            border-radius: 10px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            width: 400px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        .order-header,
+        .order-actions {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 5px;
+        }
+
+        .order-header {
+            font-weight: bold;
+            font-size: 14px;
+        }
+
+        .order-body {
+            margin-bottom: 5px;
+            font-size: 14px;
+        }
+
+        .order-actions .icons {
+            display: flex;
+            gap: 5px;
+        }
+
+        .order-actions .icon-btn {
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 14px;
+            color: #6c757d;
+        }
+
+        .pay-btn,
+        .pay-later-btn {
+            padding: 10px 15px;
+            border: none;
+            cursor: pointer;
+            border-radius: 5px;
+            transition: background-color 0.3s;
+            font-weight: bold;
+            font-size: 14px;
+            width: 100px;
+        }
+
+        .pay-btn {
+            background-color: #6200ea;
+            color: #fff;
+        }
+
+        .pay-later-btn {
+            background-color: #e0e0e0;
+            color: #6200ea;
+        }
+
+        .pay-btn:hover {
+            background-color: #3700b3;
+        }
+
+        .pay-later-btn:hover {
+            background-color: #bdbdbd;
+        }
+
+        .order-footer {
+            font-size: 12px;
+            border-top: 1px dotted #ccc;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 5px;
+            background: #e6fff5;
+            border-bottom-left-radius: 10px;
+            border-bottom-right-radius: 10px;
+        }
+
+        .order-footer .time,
+        .order-footer .dine-type {
+            display: flex;
+            align-items: center;
+            font-weight: bold;
+        }
+
+        .order-footer .time {
+            color: #6200ea;
+        }
+
+        .dine-in .order-footer .dine-type {
+            color: green;
+        }
+        .dine-in .order-footer {
+            background-color: #cefad0;
+        }
+        .to-go .order-footer .dine-type {
+            color: red;
+        }
+        .to-go .order-footer {
+            background-color: 	#ffcbd1;
+        }
+        .delivery .order-footer .dine-type {
+            color: orange;
+        }
+        .delivery .order-footer {
+            background-color: #FFEFE4;
+        }
+        .order-footer .time i,
+        .order-footer .dine-type i {
+            margin-right: 5px;
+        }
+
+        
+
+        /* Styles for the order-table */
+        .order-details {
+            flex: 1;
+        }
+
+        .order-details .card {
+            border: none;
+            border-radius: 20px;
+            width: 133%;
+        }
+
+        .order-details .table-info {
+            background-color: #e7e4ff;
+            border-radius: 10px;
+            padding: 15px;
+        }
+
+        .order-details .table-number {
+            color: white;
+            background-color: #5a00c2;
+            border-radius: 5px;
+            font-size: 1.2rem;
+            height: 28px;
+            padding-left: 8px;
+        }
+
+        .order-details .table-name {
+            color: black;
+            background: #E9F0F4;
+            border-radius: 5px;
+            background-size: 80px;
+            height: 28px;
+            padding-left: 8px;
+        }
+
+        .order-details .balance-due span {
+            color: #5a00c2;
+        }
+
+        .order-details .btn-group .btn {
+            margin-right: 5px;
+        }
+
+        .order-details .order-items {
+            margin-top: 15px;
+        }
+
+        .order-details .order-items .header {
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+
+        .order-details .order-items .item {
+            padding: 10px 0;
+            border-bottom: 1px solid #e0e0e0;
+        }
+
+        .order-details .order-items .item:last-child {
+            border-bottom: none;
+        }
+
+        .order-details .order-items .amount {
+            display: block;
+            font-size: 0.8rem;
+            color: blue;
+        }
+
+        .order-details .order-items .badge {
+            width: 55px;
+            height: 28px;
+            font-size: 1rem;
+            background-color: #5a00c2;
+        }
+
+        .order-details .order-summary {
+            background-color: #e7e4ff;
+            border-radius: 10px;
+            padding: 10px;
+        }
+
+        .order-details .order-summary p {
+            margin: 0;
+        }
+
+        .order-details .order-summary h5 {
+            font-weight: bold;
+        }
+
+        .order-details .text-center button {
+            width: 100px;
+        }
+        .textbox{
+            border-color: #aaa;
+            width: 100%;
+            border-radius: 8px;
+            padding-left: 5px;
+        }
+        
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <div class="sidebar">
+            <button class="icon active"><i class="fas fa-home"></i></button>
+            <button class="icon"><i class="fas fa-chart-line"></i></button>
+            <button class="icon"><i class="fas fa-users"></i></button>
+            <button class="icon"><i class="fas fa-box-open"></i></button>
+            <button class="icon"><i class="fas fa-envelope"></i></button>
+            <button class="icon"><i class="fas fa-file-alt"></i></button>
+            <button class="icon"><i class="fas fa-cog"></i></button>
+            <button class="icon"><i class="fa fa-user"></i></button>
+        </div>
+        <div class="ongoing-orders">
+            <ul class="nav-tabs">
+                <li class="active"><a href="#">Ongoing Orders</a></li>
+                <li><a href="#">Table View</a></li>
+                <li><a href="#">Pay Later View</a></li>
+            </ul>
+            <div class="search-bar">
+                <input type="text" placeholder="Search for foods, drinks, etc.">
+                <i class="fas fa-search search-icon"></i>
+            </div>
+            
+            <div class="tabs">
+                <button class="tab active" onclick="filterOrders('all')">All</button>
+                <button class="tab" onclick="filterOrders('dine-in')">Dine in</button>
+                <button class="tab" onclick="filterOrders('to-go')">To go</button>
+                <button class="tab" onclick="filterOrders('delivery')">Delivery</button>
+            </div>
+            <div class="orders">
+                <div class="order-card dine-in" data-table="2A" data-order="#12345" data-name="Kevin Dukon" data-amount="1000" data-type="dine-in" data-time="20 mins">
+                    <div class="order-header">
+                        <span>Table No. 2A</span>
+                        <span>#12345</span>
+                    </div>
+                    <div class="order-body">
+                        <p>Name: Kevin Dukon</p>
+                        <p>$1000</p>
+                    </div>
+                    <div class="order-actions">
+                        <button class="pay-btn">Pay</button>
+                        <button class="pay-later-btn">Pay later</button>
+                        <div class="icons">
+                            <button class="icon-btn"><i class="fas fa-trash-alt"></i></button>
+                            <button class="icon-btn"><i class="fa fa-edit"></i></button>
+                            <button class="icon-btn"><i class="fas fa-print"></i></button>
+                        </div>
+                    </div>
+                    <div class="order-footer">
+                        <span class="time"><i class="fas fa-clock"></i> 20 mins</span>
+                        <span class="dine-type"><i class="fas fa-utensils"></i> Dine in</span>
+                    </div>
+                </div>
+
+                <div class="order-card to-go" data-table="4B" data-order="#12346" data-name="John Doe" data-amount="500" data-type="to-go" data-time="20 mins">
+                    <div class="order-header">
+                        <span>Table No. 4B</span>
+                        <span>#12346</span>
+                    </div>
+                    <div class="order-body">
+                        <p>Name: John Doe</p>
+                        <p>$500</p>
+                    </div>
+                    <div class="order-actions">
+                        <button class="pay-btn">Pay</button>
+                        <button class="pay-later-btn">Pay later</button>
+                        <div class="icons">
+                            <button class="icon-btn"><i class="fas fa-trash-alt"></i></button>
+                            <button class="icon-btn"><i class="fa fa-edit"></i></button>
+                            <button class="icon-btn"><i class="fas fa-print"></i></button>
+                        </div>
+                    </div>
+                    <div class="order-footer">
+                        <span class="time"><i class="fas fa-clock"></i> 20 mins</span>
+                        <span class="dine-type"><i class="fas fa-utensils"></i> To go</span>
+                    </div>
+                </div>
+
+                <div class="order-card delivery" data-table="4B" data-order="#12346" data-name="John Doe" data-amount="500" data-type="to-go" data-time="20 mins">
+                    <div class="order-header">
+                        <span>Table No. 4B</span>
+                        <span>#12346</span>
+                    </div>
+                    <div class="order-body">
+                        <p>Name: John Doe</p>
+                        <p>$500</p>
+                    </div>
+                    <div class="order-actions">
+                        <button class="pay-btn">Pay</button>
+                        <button class="pay-later-btn">Pay later</button>
+                        <div class="icons">
+                            <button class="icon-btn"><i class="fas fa-trash-alt"></i></button>
+                            <button class="icon-btn"><i class="fa fa-edit"></i></button>
+                            <button class="icon-btn"><i class="fas fa-print"></i></button>
+                        </div>
+                    </div>
+                    <div class="order-footer">
+                        <span class="time"><i class="fas fa-clock"></i> 20 mins</span>
+                        <span class="dine-type"><i class="fas fa-motorcycle"></i> Delivery</span>
+                    </div>
+                </div>
+
+                <div class="order-card to-go" data-table="4B" data-order="#12346" data-name="John Doe" data-amount="500" data-type="to-go" data-time="20 mins">
+                    <div class="order-header">
+                        <span>Table No. 4B</span>
+                        <span>#12346</span>
+                    </div>
+                    <div class="order-body">
+                        <p>Name: John Doe</p>
+                        <p>$500</p>
+                    </div>
+                    <div class="order-actions">
+                        <button class="pay-btn">Pay</button>
+                        <button class="pay-later-btn">Pay later</button>
+                        <div class="icons">
+                            <button class="icon-btn"><i class="fas fa-trash-alt"></i></button>
+                            <button class="icon-btn"><i class="fa fa-edit"></i></button>
+                            <button class="icon-btn"><i class="fas fa-print"></i></button>
+                        </div>
+                    </div>
+                    <div class="order-footer">
+                        <span class="time"><i class="fas fa-clock"></i> 20 mins</span>
+                        <span class="dine-type"><i class="fas fa-utensils"></i> To go</span>
+                    </div>
+                </div>
+
+                <div class="order-card delivery" data-table="4B" data-order="#12346" data-name="John Doe" data-amount="500" data-type="to-go" data-time="20 mins">
+                    <div class="order-header">
+                        <span>Table No. 4B</span>
+                        <span>#12346</span>
+                    </div>
+                    <div class="order-body">
+                        <p>Name: John Doe</p>
+                        <p>$500</p>
+                    </div>
+                    <div class="order-actions">
+                        <button class="pay-btn">Pay</button>
+                        <button class="pay-later-btn">Pay later</button>
+                        <div class="icons">
+                            <button class="icon-btn"><i class="fas fa-trash-alt"></i></button>
+                            <button class="icon-btn"><i class="fa fa-edit"></i></button>
+                            <button class="icon-btn"><i class="fas fa-print"></i></button>
+                        </div>
+                    </div>
+                    <div class="order-footer">
+                        <span class="time"><i class="fas fa-clock"></i> 20 mins</span>
+                        <span class="dine-type"><i class="fa fa-motorcycle"></i> Delivery</span>
+                    </div>
+                </div>
+
+                <div class="order-card dine-in" data-table="2A" data-order="#12345" data-name="Kevin Dukon" data-amount="1000" data-type="dine-in" data-time="20 mins">
+                    <div class="order-header">
+                        <span>Table No. 2A</span>
+                        <span>#12345</span>
+                    </div>
+                    <div class="order-body">
+                        <p>Name: Kevin Dukon</p>
+                        <p>$1000</p>
+                    </div>
+                    <div class="order-actions">
+                        <button class="pay-btn">Pay</button>
+                        <button class="pay-later-btn">Pay later</button>
+                        <div class="icons">
+                            <button class="icon-btn"><i class="fas fa-trash-alt"></i></button>
+                            <button class="icon-btn"><i class="fa fa-edit"></i></button>
+                            <button class="icon-btn"><i class="fas fa-print"></i></button>
+                        </div>
+                    </div>
+                    <div class="order-footer">
+                        <span class="time"><i class="fas fa-clock"></i> 20 mins</span>
+                        <span class="dine-type"><i class="fas fa-utensils"></i> Dine in</span>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+        <div class="order-details">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="table-number">Table No.</h5>
+                    <h5 class="table-name">Name</h5>
+                    <p class="balance-due">Balance Due: <span>$<span id="balance-due">450</span></span></p>
+                    <div class="btn-group mb-3">
+                        <button class="btn btn-outline-secondary" id="dine-in">Dine In</button>
+                        <button class="btn btn-outline-secondary" id="to-go">To Go</button>
+                        <button class="btn btn-outline-secondary" id="delivery">Delivery</button>
+                    </div>
+                    <div class="order-items">
+                        <div class="row header">
+                            <div class="col-6">Items</div>
+                            <div class="col-3 text-center">Qty</div>
+                            <div class="col-3 text-end">Price</div>
+                        </div>
+                        <div class="row item">
+                            <div class="col-6">Cheesy Chicken Pasta <span class="amount">Amount $350</span></div>
+                            <div class="col-3 text-center"><span class="badge bg-primary">2</span></div>
+                            <div class="col-3 text-end">$700</div>
+                        </div>
+                        <div class="row item">
+                            <div class="col-6">Cheesy Chicken Pasta <span class="amount">Amount $140</span></div>
+                            <div class="col-3 text-center"><span class="badge bg-primary">4</span></div>
+                            <div class="col-3 text-end">$650</div>
+                        </div>
+                        <div class="row item">
+                            <div class="col-6">Cheesy Chicken Pasta <span class="amount">Amount $120</span></div>
+                            <div class="col-3 text-center"><span class="badge bg-primary">6</span></div>
+                            <div class="col-3 text-end">$350</div>
+                        </div>
+                        <div class="row item">
+                            <div class="col-6">Cheesy Chicken Pasta <span class="amount">Amount $150</span></div>
+                            <div class="col-3 text-center"><span class="badge bg-primary">3</span></div>
+                            <div class="col-3 text-end">$450</div>
+                        </div>
+                        <div class="row item">
+                            <div class="col-6">Cheesy Chicken Pasta <span class="amount">Amount $75</span></div>
+                            <div class="col-3 text-center"><span class="badge bg-primary">5</span></div>
+                            <div class="col-3 text-end">$600</div>
+                        </div>
+                        <div class="row item">
+                            <div class="col-6">Cheesy Chicken Pasta <span class="amount">Amount $225</span></div>
+                            <div class="col-3 text-center"><span class="badge bg-primary">2</span></div>
+                            <div class="col-3 text-end">$450</div>
+                        </div>
+                    </div>
+                    <textarea id="myTextBox" class="textbox" placeholder="Add cooking instructions"></textarea>
+                    
+                    <div class="order-summary mt-3 p-3">
+                        <p>Sub Total: <span>$<span id="sub-total">1100</span></span></p>
+                        <p>Discount: <span>$<span id="discount">100</span></span></p>
+                        <p><input type="checkbox" id="complimentary" checked> Complimentary</p>
+                        <h5>Total Payment: <span>$<span id="total-payment">1000</span></span></h5>
+                    </div>
+                    <div class="text-center mt-3">
+                        <button class="btn btn-outline-secondary me-2">Cancel</button>
+                        <button class="btn btn-outline-secondary me-2">Add Items</button>
+                        <button class="btn btn-primary">Pay</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script>
+
+function filterOrders(type) {
+            const allOrders = document.querySelectorAll('.order-card');
+            allOrders.forEach(order => {
+                if (type === 'all') {
+                    order.style.display = 'block';
+                } else {
+                    if (order.classList.contains(type)) {
+                        order.style.display = 'block';
+                    } else {
+                        order.style.display = 'none';
+                    }
+                }
+            });
+
+            const tabs = document.querySelectorAll('.tab');
+            tabs.forEach(tab => {
+                if (tab.textContent.toLowerCase().includes(type) || (type === 'all' && tab.textContent.toLowerCase() === 'all')) {
+                    tab.classList.add('active');
+                } else {
+                    tab.classList.remove('active');
+                }
+            });
+        }
+
+        document.querySelectorAll('.pay-btn, .pay-later-btn,.icon,.icon-btn, .btn-outline-secondary, .btn-outline-secondary, .btn-primary').forEach(button => {
+    button.addEventListener('click', (e) => {
+        e.preventDefault();
+        document.body.classList.add('fade-out');
+        setTimeout(() => {
+            saveOrderCards();
+            saveOrderDetails();
+            window.location.href = 'all.html';
+        }, 500);
+    });
+});
+
+document.addEventListener('DOMContentLoaded', () => {
+    document.body.classList.add('fade-in');
+});
+        function setCookie(name, value, days) {
+            const d = new Date();
+            d.setTime(d.getTime() + (days * 24 * 60 * 60 * 1000));
+            const expires = "expires=" + d.toUTCString();
+            document.cookie = name + "=" + value + ";" + expires + ";path=/";
+        }
+
+        function getCookie(name) {
+            const cname = name + "=";
+            const decodedCookie = decodeURIComponent(document.cookie);
+            const ca = decodedCookie.split(';');
+            for(let i = 0; i < ca.length; i++) {
+                let c = ca[i];
+                while (c.charAt(0) == ' ') {
+                    c = c.substring(1);
+                }
+                if (c.indexOf(cname) == 0) {
+                    return c.substring(cname.length, c.length);
+                }
+            }
+            return "";
+        }
+
+        // Function to save order card details in cookies
+        function saveOrderCards() {
+            const orderCards = document.querySelectorAll('.order-card');
+            orderCards.forEach((card, index) => {
+                const cardData = {
+                    table: card.getAttribute('data-table'),
+                    order: card.getAttribute('data-order'),
+                    name: card.getAttribute('data-name'),
+                    amount: card.getAttribute('data-amount'),
+                    type: card.getAttribute('data-type'),
+                    time: card.getAttribute('data-time')
+                };
+                setCookie('orderCard' + index, JSON.stringify(cardData), 7);
+            });
+        }
+
+        // Function to save order table details in cookies
+        function saveOrderDetails() {
+            const tableNumber = document.querySelector('.table-number').innerText;
+            const tableName = document.querySelector('.table-name').innerText;
+            const balanceDue = document.getElementById('balance-due').innerText;
+            const orderItems = document.querySelectorAll('.order-items .item');
+            const items = [];
+            orderItems.forEach(item => {
+                items.push({
+                    name: item.querySelector('.col-6').innerText,
+                    qty: item.querySelector('.badge').innerText,
+                    price: item.querySelector('.col-3.text-end').innerText
+                });
+            });
+            const orderSummary = {
+                subTotal: document.getElementById('sub-total').innerText,
+                discount: document.getElementById('discount').innerText,
+                totalPayment: document.getElementById('total-payment').innerText
+            };
+            const orderDetails = {
+                tableNumber,
+                tableName,
+                balanceDue,
+                items,
+                orderSummary
+            };
+            setCookie('orderDetails', JSON.stringify(orderDetails), 7);
+        }
+
+        // Save data when the page is loaded
+        window.onload = () => {
+            saveOrderCards();
+            saveOrderDetails();
+        }
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+
+</html>
